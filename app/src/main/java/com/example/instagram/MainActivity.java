@@ -12,8 +12,6 @@ import com.parse.ParseUser;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final int REQUEST_CODE = 20;
-
     MenuItem miLogout;
 
     @Override
@@ -37,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
             ParseUser.logOut();
             ParseUser currentUser = ParseUser.getCurrentUser();
             Intent intent = new Intent(this, LoginActivity.class);
-            startActivityForResult(intent, REQUEST_CODE);
+            startActivity(intent);
             finish();
             return true;
         }
