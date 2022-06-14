@@ -4,10 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -27,6 +29,8 @@ public class FeedActivity extends AppCompatActivity {
     protected List<Post> posts;
     protected PostsAdapter adapter;
     Button btnCompose;
+    private SwipeRefreshLayout swipeContainer;
+//    private EndlessRecyclerViewScrollListener scrollListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +54,7 @@ public class FeedActivity extends AppCompatActivity {
         rvPosts.addItemDecoration(dividerItemDecoration);
         // query posts from Parstagram
         queryPosts();
+
         btnCompose = findViewById(R.id.btnCompose);
         btnCompose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,6 +63,38 @@ public class FeedActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        // Lookup the swipe container view
+        swipeContainer = findViewById(R.id.swipeContainer);
+
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                adapter.clear();
+                queryPosts();
+                swipeContainer.setRefreshing(false);
+            }
+        });
+
+        // TODO: endless scrolling
+//        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+//            @Override
+//            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+//                // Triggered only when new data needs to be appended to the list
+//                // Add whatever code is needed to append new items to the bottom of the list
+//                queryPosts();
+//            }
+//        };
     }
 
     private void queryPosts() {
