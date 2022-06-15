@@ -33,7 +33,6 @@ public class ComposeActivity extends AppCompatActivity {
     public static final String TAG = "MainActivity";
     public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
 
-    private MenuItem miLogout;
     private EditText etDescription;
     private Button btnTakePic;
     private ImageView ivPostImage;
@@ -138,7 +137,6 @@ public class ComposeActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        miLogout = menu.findItem(R.id.miLogout);
         return true;
     }
 
