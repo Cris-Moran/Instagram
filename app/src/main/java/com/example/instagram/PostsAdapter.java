@@ -2,6 +2,7 @@ package com.example.instagram;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +51,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView tvUsername;
         ImageView ivFeedImage;
@@ -61,6 +62,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             tvUsername = itemView.findViewById(R.id.tvUsername);
             ivFeedImage = itemView.findViewById(R.id.ivFeedImage);
             tvDescription = itemView.findViewById(R.id.tvDescription);
+            itemView.setOnClickListener(this);
         }
 
         public void bind(Post post) {
@@ -69,6 +71,23 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             ParseFile image = post.getImage();
             if (image != null) {
                 Glide.with(context).load(image.getUrl()).into(ivFeedImage);
+            }
+        }
+
+        @Override
+        public void onClick(View v) {
+            // gets item position
+            int position = getAdapterPosition();
+            // make sure the position is valid, i.e. actually exists in the view
+            if (position != RecyclerView.NO_POSITION) {
+                // get the movie at the position, this won't work if the class is static
+                Post post = posts.get(position);
+                // create intent for the new activity
+                Intent i = new Intent(context, PostDetailsActivity.class);
+                // serialize the movie using parceler, use its short name as a key
+                i.putExtra("PARSE_OBJECT_EXTRA", post);
+                // show the activity
+                context.startActivity(i);
             }
         }
     }
