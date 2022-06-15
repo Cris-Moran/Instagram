@@ -1,74 +1,91 @@
-package com.example.instagram;
+package com.example.instagram.fragments;
+
+import android.content.Intent;
+import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.example.instagram.ComposeActivity;
+import com.example.instagram.EndlessRecyclerViewScrollListener;
+import com.example.instagram.Post;
+import com.example.instagram.PostsAdapter;
+import com.example.instagram.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FeedActivity extends AppCompatActivity {
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class PostsFragment extends Fragment {
 
-    public static final String TAG = "FeedActivity";
-    private final int REQUEST_CODE = 20;
+    public static final String TAG = "PostsFragment";
 
-    RecyclerView rvPosts;
+    private RecyclerView rvPosts;
     protected List<Post> posts;
     protected PostsAdapter adapter;
     Button btnCompose;
     private SwipeRefreshLayout swipeContainer;
-//    private EndlessRecyclerViewScrollListener scrollListener;
+    private EndlessRecyclerViewScrollListener scrollListener;
+    private int offset = 0;
+
+    public PostsFragment() {
+        // Required empty public constructor
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_feed);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_posts, container, false);
+    }
 
-        // Find recycler view
-        rvPosts = findViewById(R.id.rvPosts);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        rvPosts = view.findViewById(R.id.rvPosts);
 
         // initialize the array that will hold posts and create a PostsAdapter
         posts = new ArrayList<>();
-        adapter = new PostsAdapter(this, posts);
+        adapter = new PostsAdapter(getContext(), posts);
 
         // set the adapter on the recycler view
         rvPosts.setAdapter(adapter);
         // set the layout manager on the recycler view
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         rvPosts.setLayoutManager(linearLayoutManager);
         // add divider in between posts
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvPosts.getContext(), linearLayoutManager.getOrientation());
         rvPosts.addItemDecoration(dividerItemDecoration);
         // query posts from Parstagram
-        queryPosts();
+        queryPosts(false);
 
-        btnCompose = findViewById(R.id.btnCompose);
+        btnCompose = view.findViewById(R.id.btnCompose);
         btnCompose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(FeedActivity.this, ComposeActivity.class);
+                Intent i = new Intent(getContext(), ComposeActivity.class);
                 startActivity(i);
             }
         });
 
         // Lookup the swipe container view
-        swipeContainer = findViewById(R.id.swipeContainer);
+        swipeContainer = view.findViewById(R.id.swipeContainer);
 
         // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
@@ -84,49 +101,36 @@ public class FeedActivity extends AppCompatActivity {
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
                 adapter.clear();
-                queryPosts();
+                queryPosts(false);
                 swipeContainer.setRefreshing(false);
+                offset = 0;
             }
         });
 
-        // TODO: endless scrolling
-//        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
-//            @Override
-//            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-//                // Triggered only when new data needs to be appended to the list
-//                // Add whatever code is needed to append new items to the bottom of the list
-//                queryPosts();
-//            }
-//        };
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                queryPosts(true);
+            }
+        };
+
+        rvPosts.addOnScrollListener(scrollListener);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.miLogout) {
-            // Compose icon has been selected
-            // Navigate to the compose activity
-            ParseUser.logOut();
-            Intent i = new Intent(this, LoginActivity.class);
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // this makes sure the Back button won't work
-            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // same as above
-            startActivity(i);
-            finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void queryPosts() {
+    private void queryPosts(boolean extendingFeed) {
         // specify what type of data we want to query - Post.class
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         // include data referred by user key
         query.include(Post.KEY_USER);
+        // for endless scrolling: if we are extending the feed than skip the first 20
+        if (extendingFeed) {
+            offset += 20;
+            query.setSkip(offset);
+        } else {
+            query.setSkip(0);
+        }
         // limit query to latest 20 items
         query.setLimit(20);
         // order posts by creation date (newest first)
@@ -141,13 +145,8 @@ public class FeedActivity extends AppCompatActivity {
                     return;
                 }
 
-                // for debugging purposes let's print every post description to logcat
-                for (Post post : posts) {
-                    Log.i(TAG, "Post: " + post.getDescription() + ", username: " + post.getUser().getUsername());
-                }
-
                 // save received posts to list and notify adapter of new data
-                FeedActivity.this.posts.addAll(posts);
+                PostsFragment.this.posts.addAll(posts);
                 adapter.notifyDataSetChanged();
             }
         });

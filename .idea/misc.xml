@@ -7,12 +7,16 @@
         <entry key="app/src/main/res/drawable/roundedbutton.xml" value="0.153" />
         <entry key="app/src/main/res/drawable/splash_background.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/themes.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_compose.xml" value="0.2267074584960938" />
         <entry key="app/src/main/res/layout/activity_feed.xml" value="0.375" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.26856842041015627" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_post_details.xml" value="0.4190373738606771" />
         <entry key="app/src/main/res/layout/activity_splash_screen.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/fragment_compose.xml" value="0.3644927978515626" />
+        <entry key="app/src/main/res/layout/fragment_posts.xml" value="0.24365942028985507" />
         <entry key="app/src/main/res/layout/item_post.xml" value="0.335" />
+        <entry key="app/src/main/res/menu/menu_bottom_navigation.xml" value="0.20208333333333334" />
         <entry key="app/src/main/res/menu/menu_main.xml" value="0.25" />
         <entry key="app/src/main/res/xml/file_provider.xml" value="0.1" />
       </map>

@@ -28,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (ParseUser.getCurrentUser() != null) {
             Log.i(TAG, "Already logged in! User is: " + ParseUser.getCurrentUser().getUsername());
-            goFeedActivity();
+            goMainActivity();
         }
 
         etUsername = findViewById(R.id.etUsername);
@@ -54,14 +54,14 @@ public class LoginActivity extends AppCompatActivity {
                     Log.e(TAG, "Issue with login", e);
                     return;
                 }
-                goFeedActivity();
+                goMainActivity();
                 Toast.makeText(LoginActivity.this, "Success!", Toast.LENGTH_SHORT);
             }
         });
     }
 
-    private void goFeedActivity() {
-        Intent i = new Intent(this, FeedActivity.class);
+    private void goMainActivity() {
+        Intent i = new Intent(this, ComposeActivity.class);
         startActivity(i);
         finish();
     }
