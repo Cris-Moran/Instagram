@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -30,6 +32,8 @@ import com.example.instagram.ComposeActivity;
 import com.example.instagram.LoginActivity;
 import com.example.instagram.Post;
 import com.example.instagram.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -95,8 +99,21 @@ public class ComposeFragment extends Fragment {
                 }
                 ParseUser currentUser = ParseUser.getCurrentUser();
                 savePost(description, currentUser, photoFile);
+                goHomeFragment(v);
             }
         });
+    }
+
+    private void goHomeFragment(View v) {
+//        Fragment fragment = new PostsFragment();
+//        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        fragmentTransaction.replace(R.id.flContainer, fragment);
+//        fragmentTransaction.commit();
+//        NavigationView navigationView = v.findViewById(R.id.bottomNavigation);
+//        Log.i(TAG, String.valueOf(navigationView));
+        ((ComposeActivity) getContext()).performStreamClick();
+
     }
 
     private void launchCamera() {
@@ -152,7 +169,6 @@ public class ComposeFragment extends Fragment {
                 etDescription.setText("");
                 ivPostImage.setImageResource(0);
                 // TODO: Changed this to getActivity.finish(). Check for errors.
-                getActivity().finish();
             }
         });
     }

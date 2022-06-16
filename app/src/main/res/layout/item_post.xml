@@ -10,7 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvUsername"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="5dp"
+        android:adjustViewBounds="true"
+        android:visibility="visible"
         tools:layout_editor_absoluteX="192dp"
         tools:layout_editor_absoluteY="152dp"
         tools:srcCompat="@tools:sample/avatars" />

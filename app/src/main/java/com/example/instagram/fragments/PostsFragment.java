@@ -75,15 +75,6 @@ public class PostsFragment extends Fragment {
         // query posts from Parstagram
         queryPosts(false);
 
-        btnCompose = view.findViewById(R.id.btnCompose);
-        btnCompose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getContext(), ComposeActivity.class);
-                startActivity(i);
-            }
-        });
-
         // Lookup the swipe container view
         swipeContainer = view.findViewById(R.id.swipeContainer);
 

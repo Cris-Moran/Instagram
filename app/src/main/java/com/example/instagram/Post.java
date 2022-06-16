@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 @ParseClassName("Post")
 public class Post extends ParseObject {
@@ -55,7 +56,9 @@ public class Post extends ParseObject {
     }
 
     private static String getRelativeTimeAgo(Date date) {
+
         try {
+
             long time = date.getTime();
             long now = System.currentTimeMillis();
 
@@ -64,7 +67,7 @@ public class Post extends ParseObject {
                 return "just now";
             } else if (diff < 2 * MINUTE_MILLIS) {
                 return "a minute ago";
-            } else if (diff < 50 * MINUTE_MILLIS) {
+            } else if (diff < 60 * MINUTE_MILLIS) {
                 return diff / MINUTE_MILLIS + "m";
             } else if (diff < 90 * MINUTE_MILLIS) {
                 return "an hour ago";
